@@ -59,6 +59,7 @@ expr : NBRE
 %%
 # include <stdio.h>
 # include <assert.h>
+#include <stdlib.h>
 
 static int ligne = 1;		/* numero de ligne courante */
 
