@@ -203,6 +203,30 @@ eval(Noeud * n){
   }
 }
 
+/*
+  Cette fonction est utiliser pour identifier le dernier opérateur qui à été utilisé.
+  En fonction de ce dernier opérateur et celui en cours de traitement, ret vaut 1 s'il faut ajouter les parenthèses sinon 0 pour ne pas afficher les parenthèses.
+*/
+int checkLastOperator(int currentOperator) {
+  static int lastOperateur = '\0';
+  int ret = 0;
+
+  switch(currentOperator) {
+    case '+': case '-':
+      if(lastOperateur == '*' || lastOperateur =='/' || lastOperateur =='^')
+        ret = 1;
+      break;
+    
+    case '*': case '/':
+      if(lastOperateur == '^')
+        ret = 1;
+      break;
+  }
+
+  lastOperateur = currentOperator;
+  return ret;
+}
+
 /* parenthese  --  ecrit une expression completement parenthesee */
 static void
 parenthese(Noeud * n){
@@ -222,11 +246,14 @@ parenthese(Noeud * n){
     break;
 
   case '+':  case '-':  case '*':  case '/':  case '^':
-    putchar('(');
+    int ret = checkLastOperator(n->type);
+    if(ret)
+      putchar('(');
     parenthese(n->gauche);
     putchar(n->type);
     parenthese(n->droit);
-    putchar(')');
+    if(ret)
+      putchar(')');
   }
 }
 
