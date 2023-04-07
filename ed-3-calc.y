@@ -25,7 +25,7 @@ int yyerror(char *);
 
 %left <i> ADD			/* Precedence et associativite */
 %left <i> MUL
-%left '^'
+%right '^'
 %left UMOINS
 
 %start exprs			/* le symbole de depart */
