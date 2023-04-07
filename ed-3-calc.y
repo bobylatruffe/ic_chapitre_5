@@ -218,7 +218,7 @@ parenthese(Noeud * n, Noeud *parent){
     break;
 
   case UMOINS:
-    printf("-(");
+    printf("(-");
     parenthese(n->gauche, n);
     putchar(')');
     break;
