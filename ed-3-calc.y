@@ -203,33 +203,9 @@ eval(Noeud * n){
   }
 }
 
-/*
-  Cette fonction est utiliser pour identifier le dernier opérateur qui à été utilisé.
-  En fonction de ce dernier opérateur et celui en cours de traitement, ret vaut 1 s'il faut ajouter les parenthèses sinon 0 pour ne pas afficher les parenthèses.
-*/
-int checkLastOperator(int currentOperator) {
-  static int lastOperateur = '\0';
-  int ret = 0;
-
-  switch(currentOperator) {
-    case '+': case '-':
-      if(lastOperateur == '*' || lastOperateur =='/' || lastOperateur =='^')
-        ret = 1;
-      break;
-    
-    case '*': case '/':
-      if(lastOperateur == '^')
-        ret = 1;
-      break;
-  }
-
-  lastOperateur = currentOperator;
-  return ret;
-}
-
 /* parenthese  --  ecrit une expression completement parenthesee */
 static void
-parenthese(Noeud * n){
+parenthese(Noeud * n, Noeud *parent){
   switch(n->type){
   default:
     fprintf(stderr, "eval : noeud de type %d inconnu\n", n->type);
@@ -241,19 +217,35 @@ parenthese(Noeud * n){
 
   case UMOINS:
     printf("-(");
-    parenthese(n->gauche);
+    parenthese(n->gauche, n);
     putchar(')');
     break;
 
-  case '+':  case '-':  case '*':  case '/':  case '^':
-    int ret = checkLastOperator(n->type);
+  case '-' :
+    int ret = (parent && parent->type == '^') ? 1 :0;
     if(ret)
       putchar('(');
-    parenthese(n->gauche);
+    parenthese(n->gauche, n);
     putchar(n->type);
-    parenthese(n->droit);
+    parenthese(n->droit, n);
     if(ret)
       putchar(')');
+    break;
+  
+  case '^': 
+    putchar('(');
+    parenthese(n->gauche, n);
+    putchar(n->type);
+    parenthese(n->droit, n);
+    putchar(')');
+    break;
+
+  case '+':  case '*':  case '/':
+    putchar('(');
+    parenthese(n->gauche, n);
+    putchar(n->type);
+    parenthese(n->droit, n);
+    putchar(')');
   }
 }
 
@@ -282,7 +274,7 @@ freenoeuds(Noeud * n){
 /* print  --  imprime l'expression parenthesee et sa valeur */
 void
 print(Noeud * n){
-  parenthese(n);		/* expression parenthesee */
+  parenthese(n, NULL);		/* expression parenthesee */
 
   printf(" = %d\n", eval(n));	/* valeur */
 
