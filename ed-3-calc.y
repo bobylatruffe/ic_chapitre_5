@@ -206,6 +206,8 @@ eval(Noeud * n){
 /* parenthese  --  ecrit une expression completement parenthesee */
 static void
 parenthese(Noeud * n, Noeud *parent){
+  int ret = 0;
+
   switch(n->type){
   default:
     fprintf(stderr, "eval : noeud de type %d inconnu\n", n->type);
@@ -222,7 +224,7 @@ parenthese(Noeud * n, Noeud *parent){
     break;
 
   case '-' :
-    int ret = (parent && parent->type == '^') ? 1 :0;
+    ret = (parent && parent->type == '^') ? 1 :0;
     if(ret)
       putchar('(');
     parenthese(n->gauche, n);
@@ -233,11 +235,14 @@ parenthese(Noeud * n, Noeud *parent){
     break;
   
   case '^': 
-    putchar('(');
+    ret = (parent && parent->type == '^') ? 1 :0;
+    if(ret)
+      putchar('(');
     parenthese(n->gauche, n);
     putchar(n->type);
     parenthese(n->droit, n);
-    putchar(')');
+    if(ret)
+      putchar(')');
     break;
 
   case '+':  case '*':  case '/':
