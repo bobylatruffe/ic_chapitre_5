@@ -223,8 +223,8 @@ parenthese(Noeud * n, Noeud *parent){
     putchar(')');
     break;
 
-  case '-' :
-    ret = (parent && parent->type == '^') ? 1 :0;
+  case '-': case '+':
+    ret = (parent && (parent->type == '^' || parent->type == '*' || parent->type == '/')) ? 1 :0;
     if(ret)
       putchar('(');
     parenthese(n->gauche, n);
@@ -235,7 +235,13 @@ parenthese(Noeud * n, Noeud *parent){
     break;
   
   case '^': 
-    ret = (parent && parent->type == '^') ? 1 :0;
+    parenthese(n->gauche, n);
+    putchar(n->type);
+    parenthese(n->droit, n);
+    break;
+
+  case '*':  case '/':
+    ret = (parent && parent->type == '^') ? 1 : 0;
     if(ret)
       putchar('(');
     parenthese(n->gauche, n);
@@ -243,14 +249,6 @@ parenthese(Noeud * n, Noeud *parent){
     parenthese(n->droit, n);
     if(ret)
       putchar(')');
-    break;
-
-  case '+':  case '*':  case '/':
-    putchar('(');
-    parenthese(n->gauche, n);
-    putchar(n->type);
-    parenthese(n->droit, n);
-    putchar(')');
   }
 }
 
