@@ -11,6 +11,7 @@ Auteur : Bozlak Fatih 1503001522G
 %%
 [\t ]+ ; /* On ignore les espaces blancs */
 X { return X;}
+, {return yytext[0];} 
 \n {return 0;} /* Fin de l'entrée */
 . ; /* On ignore tous les autres caractères */
 %%
