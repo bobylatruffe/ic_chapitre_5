@@ -15,9 +15,13 @@ void yyerror(const char *);
 %token X
 
 %%
-liste   : X {printf("Liste valide\n");} ;
-        | liste X ;
+liste   : desX {printf("Liste valide\n");}
+        | /* rien */ {printf("Liste valide\n");}
+        ;
 
+desX    : desX X
+        | X
+        ;
 %%
 
 void yyerror(const char *msg) {
